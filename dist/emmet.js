@@ -394,6 +394,7 @@
 			 * @return {String}
 			 */
 			read: function(path, size, callback) {
+				alert("read: " + path + ", " + size + ", " + typeof callback);
 				var bin = io.readBin(path, size);
 				if (callback) {
 					callback(bin);
@@ -432,6 +433,7 @@
 				while (folder) {
 					result = path.join(folder, fileName);
 					if (path.exists(result)) {
+						alert("locate: " + result);
 						return result;
 					}
 					folder = path.parent(folder);
@@ -447,6 +449,7 @@
 			 * @return {String}
 			 */
 			createPath: function(parent, fileName) {
+				alert("create path: " + parent + ", " + fileName);
 				return path.join(parent, fileName);
 			},
 
@@ -456,6 +459,7 @@
 			 * @param {String} content File content
 			 */
 			save: function(file, content) {
+				alert("save: " + file);
 				io.write(file, content);
 			},
 
@@ -465,6 +469,7 @@
 			 * @return {String}
 			 */
 			getExt: function(file) {
+				alert("get ext: " + file);
 				var m = (file || '').match(/\.([\w\-]+)$/);
 				return m ? m[1].toLowerCase() : '';
 			}
@@ -472,6 +477,15 @@
 	})();
 
 	emmet.file(emmetFile);
+
+	function tryRun(action, abbr) {
+		try {
+			emmet.run(action, emmetEditor, abbr);
+			// alert(result);
+		} catch (err) {
+			alert(err);
+		}
+	}
 
 	/**
 	 * Zen Coding manager that runs actions
@@ -483,17 +497,20 @@
 		if (action_name == 'wrap_with_abbreviation' || action_name == "update_tag") {
 			Dialog.prompt('Enter Abbreviation',"", function(abbr){
 				if (abbr)
-					emmet.run(action_name, emmetEditor, abbr);
+					tryRun(action_name, abbr);
+					// emmet.run(action_name, emmetEditor, abbr);
 			});
 		} else if (action_name == "expand_abbreviation_with_tab") {
 			// Emmet's indentation style doesn't match notepad++'s.
 			if (emmetEditor.isCollapsed()) {
-				emmet.run(action_name, emmetEditor);
+				tryRun(action_name);
+				// emmet.run(action_name, emmetEditor);
 			} else {
 				MenuCmds.EDIT_INS_TAB();
 			}
 		} else {
-			return emmet.run(action_name, emmetEditor);
+			// return emmet.run(action_name, emmetEditor);
+			tryRun(action_name);
 		}
 	}
 
